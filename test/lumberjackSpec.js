@@ -34,7 +34,8 @@ describe('lumberjack', function() {
 
             it('has a log function', function() {
                 var sut = require(_lumberjack)();
+                sut.sut = sut;
                 sut.log();
-                sut.log(null, null, function() {});
+                sut.log(null, null, function() {}, sut, {});
             });
         });
