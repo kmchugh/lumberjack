@@ -2,11 +2,16 @@
     "name": "lumberjack",
     "description": "Logging framework",
     "version": "0.0.1",
+    "url" : "https://github.com/kmchugh/lumberjack/issues",
     "author": "Ken McHugh <kmchugh@icatalyst.co.uk>",
+    "email":"kmchugh@icatalyst.co.uk",
     "keywords": [
         "logging"
     ],
-    "repository": "kmchugh/lumberjack",
+    "repository": {
+        "type":"git",
+        "url":"https://github.com/kmchugh/lumberjack.git"
+        },
     "license": "MIT",
     "dependencies": {
         "merge": "~1.1.3"
