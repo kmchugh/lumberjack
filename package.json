@@ -29,7 +29,7 @@
         "pretest": "./node_modules/jshint/bin/jshint --reporter node_modules/jshint-stylish/stylish.js ./{,**/}*.js",
         "test": "./node_modules/istanbul/lib/cli.js cover ./node_modules/.bin/_mocha --coverage",
         "test-cov": "./node_modules/istanbul/lib/cli.js cover ./node_modules/.bin/_mocha --reporter dot",
-        "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/.bin/_mocha --report lcovonly --reporter spec",
+        "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/.bin/_mocha --report lcovonly --reporter spec"
 
     }
 }
