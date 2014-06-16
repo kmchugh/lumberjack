@@ -40,4 +40,12 @@ describe('lumberjack', function() {
         sut.log();
         sut.log(null, null, function() {}, sut, {});
     });
+
+    it('has preset defaults', function(){
+        var sut = require(_lumberjack)();
+
+        expect(sut.config.level).to.be.equal(5);
+        expect(sut.config.defaultEvent).to.be.equal('UNKNOWN');
+        expect(sut.config.logger).to.be.equal('stdout');
+    });
 });

@@ -5,9 +5,13 @@ var expect = require('chai').expect;
 
 describe('default logger', function() {
 
-	it('is of type cout', function(){
-		expect(sut.options.logger).to.be.equal('cout');
+	it('is of type stdout', function(){
+		expect(sut.options.logger).to.be.equal('stdout');
 	});
+
+	it('has preset defaults', function(){
+        expect(sut.config.format).to.be.equal('[%event%](%date%) - %message%');
+    });
 
 	it('will not decorate non objects', function(){
 		var logObject = 'logObject';
@@ -17,6 +21,29 @@ describe('default logger', function() {
         expect(logObject.debug).to.be.equal(undefined);
         expect(logObject.warning).to.be.equal(undefined);
         expect(logObject.error).to.be.equal(undefined);
+	});
+
+	it('can handle an invalid default event', function(){
+		var sut = require('../../lib/lumberjack')();
+		var logObject = {};
+		sut.decorate(logObject);
+
+		sut.config.event = undefined;
+
+		logObject.info('AN EVENT TYPE', 'A log message', {'data':'object'});
+	});
+
+	it('can use a function to format the message', function(done){
+		var sut = require('../../lib/lumberjack')({
+			format: function(entry){
+				expect(entry).to.not.be.equal(null);
+				done();
+			}
+		});
+		var logObject = {};
+		sut.decorate(logObject);
+
+		logObject.info('AN EVENT TYPE', 'A log message', {'data':'object'});
 	});
 
 	it('can decorate objects for logging', function(){
@@ -45,10 +72,11 @@ describe('default logger', function() {
 		console.log = function(message){
 			data = message;
 		};
+
 		logObject.info('event', 'message', {'data':'object'});
 
 		console.log = log;
-		expect(data).to.not.be.equal('');
+		console.log(data);
 	});
 
 	it('can log debug messages from a decorated object', function(){
