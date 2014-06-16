@@ -1,7 +1,7 @@
 {
     "name": "lumberjack",
     "description": "Logging framework",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "url" : "https://github.com/kmchugh/lumberjack/issues",
     "author": "Ken McHugh <kmchugh@icatalyst.co.uk>",
     "email":"kmchugh@icatalyst.co.uk",
@@ -35,8 +35,8 @@
     "scripts": {
         "pretest": "./node_modules/.bin/jshint --reporter node_modules/jshint-stylish/stylish.js .",
         "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --coverage --recursive ./test/{,**/}*Spec.js",
-        "test-cov": "./node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot",
-        "test-travis": "./node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec"
+        "test-cov": "./node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha  --recursive ./test/{,**/}*Spec.js -- --reporter dot",
+        "test-travis": "./node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly  --recursive ./test/{,**/}*Spec.js -- --reporter spec"
 
     }
 }
