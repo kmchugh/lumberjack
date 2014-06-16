@@ -1,3 +1,4 @@
+/*jshint expr: true*/
 'use strict';
 
 var sut = require('../../lib/lumberjack')();
@@ -133,5 +134,101 @@ describe('default logger', function() {
 
 		console.error = log;
 		expect(data).to.not.be.equal('');
+	});
+
+	it('can log in different colours', function(){
+		var logObject = {};
+		sut.decorate(logObject);
+
+		var data = '';
+		var log = console.log;
+		var error = console.error;
+
+		console.log = function(message){
+			data = message;
+		};
+
+		console.error = function(message){
+			data = message;
+		};
+
+		logObject.info('info event', 'info message', 'test');
+		expect(data.match(/^\[\x1b\[90minfo event\x1b\[0m\]\(\x1b\[90m.+\) - \x1b\[36minfo message\x1b\[0m$/)).to.not.be.null;
+
+		logObject.debug('debug event', 'debug message');
+		expect(data.match(/^\[\x1b\[90mdebug event\x1b\[0m\]\(\x1b\[90m.+\) - \x1b\[34mdebug message\x1b\[0m$/)).to.not.be.null;
+
+		logObject.warning('warning event', 'warning message');
+		expect(data.match(/^\[\x1b\[90mwarning event\x1b\[0m\]\(\x1b\[90m.+\) - \x1b\[33mwarning message\x1b\[0m$/)).to.not.be.null;
+
+		logObject.error('error event', 'error message');
+		expect(data.match(/^\[\x1b\[31merror event\x1b\[0m\]\(\x1b\[90m.+\) - \x1b\[31merror message\x1b\[0m$/)).to.not.be.null;
+
+		console.log = log;
+		console.error = error;
+	});
+
+	it('can log without colours', function(){
+		var sut = require('../../lib/lumberjack')({
+			useColour: false
+		});
+
+		var logObject = {};
+		sut.decorate(logObject);
+
+		var data = '';
+		var log = console.log;
+		var error = console.error;
+
+		console.log = function(message){
+			data = message;
+		};
+
+		console.error = function(message){
+			data = message;
+		};
+
+		logObject.info('info event', 'info message', 'test');
+		expect(data.match(/^\[info event\]\(.+\) - info message$/)).to.not.be.null;
+
+		logObject.debug('debug event', 'debug message');
+		expect(data.match(/^\[debug event\]\(.+\) - debug message$/)).to.not.be.null;
+
+		logObject.warning('warning event', 'warning message');
+		expect(data.match(/^\[warning event\]\(.+\) - warning message$/)).to.not.be.null;
+
+		logObject.error('error event', 'error message');
+		expect(data.match(/^\[error event\]\(.+\) - error message$/)).to.not.be.null;
+
+		console.log = log;
+		console.error = error;
+	});
+
+	it('can log with custom formats', function(){
+		var sut = require('../../lib/lumberjack')({
+			format: '%message% - %data%%random%'
+		});
+
+		var logObject = {};
+		sut.decorate(logObject);
+
+		var data = '';
+		var log = console.log;
+
+		console.log = function(message){
+			data = message;
+		};
+
+		logObject.info('info event', 'info message', 'test');
+		expect(data.match(/^\x1b\[36minfo message\x1b\[0m - \x1b\[90mtest\x1b\[0m\x1b\[90m\x1b\[0m$/)).to.not.be.null;
+
+		sut.config.useColour = false;
+
+		logObject.info('info event', 'info message', 'test');
+		expect(data.match(/^info message - test$/)).to.not.be.null;
+
+
+		console.log = log;
+		console.log(data);
 	});
 });
