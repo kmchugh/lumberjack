@@ -35,14 +35,22 @@ describe('default logger', function() {
 
 	it('can use a function to format the message', function(done){
 		var sut = require('../../lib/lumberjack')({
+			useColour: false,
 			format: function(entry){
 				expect(entry).to.not.be.equal(null);
-				done();
+				return 'custom error';
 			}
 		});
 		var logObject = {};
 		sut.decorate(logObject);
 
+		logObject.error('AN EVENT TYPE', 'A log message', {'data':'object'});
+
+		sut.config.format = function(entry){
+				expect(entry).to.not.be.equal(null);
+				done();
+				return 'custom log';
+			};
 		logObject.info('AN EVENT TYPE', 'A log message', {'data':'object'});
 	});
 
