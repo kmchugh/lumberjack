@@ -34,13 +34,6 @@ describe('lumberjack', function() {
         expect(sut.options.test).is.equal(12345);
     });
 
-    it('has a log function', function() {
-        var sut = require(_lumberjack)();
-        sut.sut = sut;
-        sut.log();
-        sut.log(null, null, function() {}, sut, {});
-    });
-
     it('has preset defaults', function(){
         var sut = require(_lumberjack)();
 
