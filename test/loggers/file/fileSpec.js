@@ -39,9 +39,16 @@ describe('file output logger', function() {
                 rimraf.sync(sut.config.location);
             }
             logObject.warning('WARNING', 'this is a warning message', null, function(){
-                expect(fs.existsSync(sut.config.location)).to.be.true;
-                sut.config.location = location;
-                done();
+                setTimeout(
+                    function(){
+                        fs.exists(sut.config.location, function(exists){
+                            expect(exists).to.be.true;
+                            sut.config.location = location;
+                            done();
+                        });
+                    },
+                    100
+                    );
             });
         });
     });
