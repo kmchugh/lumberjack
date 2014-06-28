@@ -1,3 +1,4 @@
+/*jshint expr: true*/
 'use strict';
 
 var sut = require('../../lib/lumberjack')();
@@ -5,22 +6,58 @@ var expect = require('chai').expect;
 
 describe('default logger', function() {
 
+	/**
+	 * Wraps console.log so that we can extract the output
+	 * @return {String} The string that was logged
+	 */
+	var wrapLog = function(callback)
+	{
+		var data = '';
+		var logFunction = console.log;
+
+		console.log = function(message){
+			data = message;
+		};
+		callback();
+
+		console.log = logFunction;
+		return data;
+	};
+
+	/**
+	 * Wraps console.error so that we can extract the output
+	 * @return {String} The string that was logged
+	 */
+	var wrapError = function(callback)
+	{
+		var data = '';
+		var logFunction = console.error;
+
+		console.error = function(message){
+			data = message;
+		};
+		callback();
+
+		console.error = logFunction;
+		return data;
+	};
+
 	it('is of type stdout', function(){
 		expect(sut.options.logger).to.be.equal('stdout');
 	});
 
 	it('has preset defaults', function(){
-        expect(sut.config.format).to.be.equal('[%event%](%date%) - %message%');
-    });
+		expect(sut.config.format).to.be.equal('[%event%](%date%) - %message%');
+	});
 
 	it('will not decorate non objects', function(){
 		var logObject = 'logObject';
-        sut.decorate(logObject);
+	 	sut.decorate(logObject);
 
-        expect(logObject.info).to.be.equal(undefined);
-        expect(logObject.debug).to.be.equal(undefined);
-        expect(logObject.warning).to.be.equal(undefined);
-        expect(logObject.error).to.be.equal(undefined);
+		expect(logObject.info).to.be.equal(undefined);
+		expect(logObject.debug).to.be.equal(undefined);
+		expect(logObject.warning).to.be.equal(undefined);
+		expect(logObject.error).to.be.equal(undefined);
 	});
 
 	it('can handle an invalid default event', function(){
@@ -29,8 +66,10 @@ describe('default logger', function() {
 		sut.decorate(logObject);
 
 		sut.config.event = undefined;
-
-		logObject.info('AN EVENT TYPE', 'A log message', {'data':'object'});
+		var data = wrapLog(function(){
+			logObject.info('AN EVENT TYPE', 'A log message', {'data':'object'});
+		});
+		expect(data.match(/^\[\x1b\[90mAN EVENT TYPE\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[36mA log message\x1b\[0m$/)).to.not.be.null;
 	});
 
 	it('can use a function to format the message', function(done){
@@ -44,94 +83,72 @@ describe('default logger', function() {
 		var logObject = {};
 		sut.decorate(logObject);
 
-		logObject.error('AN EVENT TYPE', 'A log message', {'data':'object'});
+		var data = wrapError(function(){
+			logObject.error('AN EVENT TYPE', 'A log message', {'data':'object'});
+		});
+		expect(data).to.be.equal('custom error');
 
 		sut.config.format = function(entry){
 				expect(entry).to.not.be.equal(null);
 				done();
 				return 'custom log';
 			};
-		logObject.info('AN EVENT TYPE', 'A log message', {'data':'object'});
+
+		data = wrapLog(function(){
+			logObject.info('AN EVENT TYPE', 'A log message', {'data':'object'});
+		});
+		expect(data).to.be.equal('custom log');
 	});
 
 	it('can decorate objects for logging', function(){
 		var logObject = {};
 
-        expect(logObject.info).to.be.equal(undefined);
-        expect(logObject.debug).to.be.equal(undefined);
-        expect(logObject.warning).to.be.equal(undefined);
-        expect(logObject.error).to.be.equal(undefined);
+		expect(logObject.info).to.be.equal(undefined);
+		expect(logObject.debug).to.be.equal(undefined);
+		expect(logObject.warning).to.be.equal(undefined);
+		expect(logObject.error).to.be.equal(undefined);
 
-        sut.decorate(logObject);
-
-        expect(logObject.info).to.be.a('function');
-        expect(logObject.debug).to.be.a('function');
-        expect(logObject.warning).to.be.a('function');
-        expect(logObject.error).to.be.a('function');
-	});
-
-	it('can log information messages from a decorated object', function(){
-		var logObject = {};
 		sut.decorate(logObject);
+
 		expect(logObject.info).to.be.a('function');
-
-		var log = console.log;
-		var data = '';
-		console.log = function(message){
-			data = message;
-		};
-
-		logObject.info('event', 'message', {'data':'object'});
-
-		console.log = log;
-		console.log(data);
-	});
-
-	it('can log debug messages from a decorated object', function(){
-		var logObject = {};
-		sut.decorate(logObject);
 		expect(logObject.debug).to.be.a('function');
-
-		var log = console.log;
-		var data = '';
-		console.log = function(message){
-			data = message;
-		};
-		logObject.debug('event', 'message', {'data':'object'});
-
-		console.log = log;
-		expect(data).to.not.be.equal('');
-	});
-
-	it('can log warning messages from a decorated object', function(){
-		var logObject = {};
-		sut.decorate(logObject);
 		expect(logObject.warning).to.be.a('function');
-
-		var log = console.log;
-		var data = '';
-		console.log = function(message){
-			data = message;
-		};
-		logObject.warning('event', 'message', {'data':'object'});
-
-		console.log = log;
-		expect(data).to.not.be.equal('');
+		expect(logObject.error).to.be.a('function');
 	});
 
-	it('can log error messages from a decorated object', function(){
+	it('can log with custom formats', function(){
+		var sut = require('../../lib/lumberjack')({
+			format: '%message% - %data%%random%'
+		});
+
 		var logObject = {};
 		sut.decorate(logObject);
-		expect(logObject.error).to.be.a('function');
 
-		var log = console.log;
-		var data = '';
-		console.error = function(message){
-			data = message;
-		};
-		logObject.error('event', 'message', {'data':'object'});
+		var data = wrapLog(function(){
+			logObject.info('info event', 'info message', 'test');
+		});
+		expect(data.match(/^\x1b\[36minfo message\x1b\[0m - \x1b\[90mtest\x1b\[0m\x1b\[90m\x1b\[0m$/)).to.not.be.null;
 
-		console.error = log;
-		expect(data).to.not.be.equal('');
+		sut.config.useColour = false;
+
+		data = wrapLog(function(){
+			logObject.info('info event', 'info message', 'test');
+		});
+		expect(data.match(/^info message - test$/)).to.not.be.null;
+
+	});
+
+	it('has a log function', function() {
+		expect(sut.log).to.be.a('function');
+		sut.sut = sut;
+
+		var data = wrapLog(function(){
+		    sut.log();
+		});
+		expect(data.match(/^\[\x1b\[90mUNKNOWN\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[36m\x1b\[0m$/)).to.not.be.null;
+
+		data = wrapLog(function(){
+		    sut.log('INFO', 'EVENT', 'MESSAGE', sut, 'ERROR');
+		});
 	});
 });
