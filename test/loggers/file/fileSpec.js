@@ -31,7 +31,7 @@ describe('file output logger', function() {
         sut.decorate(logObject);
 
         var location = sut.config.location;
-        sut.config.location = './logs/test/test1';
+        sut.config.location = path.resolve('./logs/test/test1');
 
         fs.exists(sut.config.location, function(exists){
             if (exists)
