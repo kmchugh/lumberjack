@@ -15,7 +15,7 @@ describe('file output logger', function() {
     });
 
     it('has a default file location', function(){
-        expect(sut.config.location).to.be.equal('./logs');
+        expect(sut.config.location).to.be.equal(path.resolve('./logs'));
     });
 
     it('has a default file prefix', function(){
