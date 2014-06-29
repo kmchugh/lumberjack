@@ -82,19 +82,19 @@ describe('lumberjack', function() {
 
         sut.test(req, res, next);
         res.finish();
-        expect(data.match(/^\[EXPRESS:request\]\(\".+\"\) - GET \[200\] - http:\/\/www.test.com 0ms\r?\n\{\r?\n  \"url\": \"http:\/\/www.test.com\",\r?\n  \"method\": \"GET\",\r?\n  \"statusCode\": 200,\r?\n  \"executionTime\": 0\r?\n\}$/)).to.not.be.null;
+        expect(data.match(/^\[EXPRESS:request\]\(\".+\"\) - GET \[200\] - http:\/\/www.test.com 0ms$/)).to.not.be.null;
 
         res.statusCode = 400;
 
         sut.test(req, res, next);
         res.finish();
-        expect(data.match(/^\[EXPRESS:request\]\(\".+\"\) - GET \[400\] - http:\/\/www.test.com 0ms$/)).to.not.be.null;
+        expect(data.match(/^\[EXPRESS:request\]\(\".+\"\) - GET \[400\] - http:\/\/www.test.com 0ms\r?\n\{\r?\n  \"url\": \"http:\/\/www.test.com\",\r?\n  \"method\": \"GET\",\r?\n  \"statusCode\": 400,\r?\n  \"executionTime\": 0\r?\n\}$/)).to.not.be.null;
 
         res.statusCode = 500;
 
         sut.test(req, res, next);
         res.finish();
-        expect(data.match(/^\[EXPRESS:request\]\(\".+\"\) - GET \[500\] - http:\/\/www.test.com 0ms$/)).to.not.be.null;
+        expect(data.match(/^\[EXPRESS:request\]\(\".+\"\) - GET \[500\] - http:\/\/www.test.com 0ms\r?\n\{\r?\n  \"url\": \"http:\/\/www.test.com\",\r?\n  \"method\": \"GET\",\r?\n  \"statusCode\": 500,\r?\n  \"executionTime\": 0\r?\n\}$/)).to.not.be.null;
 
         console.log = logFunction;
         console.error = errorFunction;
