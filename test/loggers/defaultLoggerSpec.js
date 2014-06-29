@@ -152,4 +152,11 @@ describe('default logger', function() {
 		});
 		expect(data.match(/^\[\x1b\[33mEVENT\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[33mMESSAGE\x1b\[0m$/)).to.not.be.null;
 	});
+
+	it('stores a reference in the log object', function(){
+		var logObject = {};
+		sut.decorate(logObject);
+
+		expect(logObject._lumberjack).to.be.equal(sut);
+	});
 });
