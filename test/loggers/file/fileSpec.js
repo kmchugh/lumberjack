@@ -47,7 +47,7 @@ describe('file output logger', function() {
                             done();
                         });
                     },
-                    100
+                    30
                     );
             });
         });
@@ -95,7 +95,7 @@ describe('file output logger', function() {
                     }
 
                     fs.readFile(sut.config.location + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
-                        expect(data.match(/^\[INFO\]\(.+\) - this is an info message\r?\n$/)).to.not.be.null;
+                        expect(data.match(/^\[INFO\]\(.+\) - this is an info message\r?\n\r?\n$/)).to.not.be.null;
                         done();
                     });
                 });
@@ -120,7 +120,7 @@ describe('file output logger', function() {
                     }
 
                     fs.readFile(sut.config.location + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
-                        expect(data.match(/^\[DEBUG\]\(.+\) - this is a debug message\r?\n$/)).to.not.be.null;
+                        expect(data.match(/^\[DEBUG\]\(.+\) - this is a debug message\r?\n\r?\n$/)).to.not.be.null;
                         done();
                     });
                 });
@@ -162,7 +162,7 @@ describe('file output logger', function() {
             {
                 rimraf.sync(sut.config.location);
             }
-            logObject.info('INFO', 'this is info 1', null, function(){
+            logObject.info('INFO', 'this is info 1', {some: 'data'}, function(){
                 logObject.info('INFO', 'this is info 2', null, function(){
                     fs.readdir(sut.config.location, function(err, files){
                         if (err)
@@ -171,7 +171,7 @@ describe('file output logger', function() {
                         }
 
                         fs.readFile(sut.config.location + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
-                            expect(data.match(/^\[INFO\]\(.+\) - this is info 1\r?\n\[INFO\]\(.+\) - this is info 2\r?\n$/)).to.not.be.null;
+                            expect(data.match(/^\[INFO\]\(.+\) - this is info 1\r?\n{\r?\n  "some": "data"\r?\n}\r?\n\[INFO\]\(.+\) - this is info 2\r?\n\r?\n$/)).to.not.be.null;
                             done();
                         });
                     });
