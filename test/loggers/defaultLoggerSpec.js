@@ -67,9 +67,9 @@ describe('default logger', function() {
 
 		sut.config.event = undefined;
 		var data = wrapLog(function(){
-			logObject.warning('AN EVENT TYPE', 'A log message', {'data':'object'});
+			logObject.info('AN EVENT TYPE', 'A log message', {'data':'object'});
 		});
-		expect(data.match(/^\[\x1b\[33mAN EVENT TYPE\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[33mA log message\x1b\[0m$/)).to.not.be.null;
+		expect(data.match(/^\[\x1b\[36mAN EVENT TYPE\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[36mA log message\x1b\[0m$/)).to.not.be.null;
 	});
 
 	it('can use a function to format the message', function(done){
@@ -145,12 +145,12 @@ describe('default logger', function() {
 		var data = wrapLog(function(){
 		    sut.log();
 		});
-		expect(data.match(/^\[\x1b\[36mUNKNOWN\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[36m\x1b\[0m\r?\n\x1b\[37m\x1b\[0m$/)).to.not.be.null;
+		expect(data.match(/^\[\x1b\[36mUNKNOWN\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[36m\x1b\[0m$/)).to.not.be.null;
 
 		data = wrapLog(function(){
-		    sut.log('WARNING', 'EVENT', 'MESSAGE', sut, 'ERROR');
+		    sut.log('INFO', 'EVENT', 'MESSAGE', sut, 'ERROR');
 		});
-		expect(data.match(/^\[\x1b\[33mEVENT\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[33mMESSAGE\x1b\[0m$/)).to.not.be.null;
+		expect(data.match(/^\[\x1b\[36mEVENT\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[36mMESSAGE\x1b\[0m$/)).to.not.be.null;
 	});
 
 	it('stores a reference in the log object', function(){

@@ -58,7 +58,7 @@ describe('standard output logger', function() {
         var data = wrapLog(function(){
             logObject.warning('WARNING', 'this is a warning message');
         });
-        expect(data.match(/^\[\x1b\[33mWARNING\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[33mthis is a warning message\x1b\[0m$/)).to.not.be.null;
+        expect(data.match(/^\[\x1b\[33mWARNING\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[33mthis is a warning message\x1b\[0m\r?\n\x1b\[90m\x1b\[0m$/)).to.not.be.null;
     });
 
     it('logs debug messages to standard output', function(){
@@ -78,7 +78,7 @@ describe('standard output logger', function() {
         var data = wrapLog(function(){
             logObject.info('INFO', 'this is an info message');
         });
-        expect(data.match(/^\[\x1b\[36mINFO\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[36mthis is an info message\x1b\[0m\r?\n\x1b\[37m\x1b\[0m$/)).to.not.be.null;
+        expect(data.match(/^\[\x1b\[36mINFO\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[36mthis is an info message\x1b\[0m$/)).to.not.be.null;
     });
 
     it('logs errors to standard error output', function(){
@@ -88,7 +88,7 @@ describe('standard output logger', function() {
         var data = wrapError(function(){
             logObject.error('ERROR', 'this is an error message');
         });
-        expect(data.match(/^\[\x1b\[31mERROR\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[31mthis is an error message\x1b\[0m$/)).to.not.be.null;
+        expect(data.match(/^\[\x1b\[31mERROR\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[31mthis is an error message\x1b\[0m\r?\n\x1b\[90m\x1b\[0m$/)).to.not.be.null;
     });
 
     it('does not log warning messages to standard error output', function(){
@@ -162,7 +162,7 @@ describe('standard output logger', function() {
                 logObject.info('INFO', 'this is an info message');
             });
 
-        expect(data.match(/^\[INFO\]\(.+\) - this is an info message\r?\n$/)).to.not.be.null;
+        expect(data.match(/^\[INFO\]\(.+\) - this is an info message$/)).to.not.be.null;
 
         sut.config.useColour = true;
     });
@@ -176,7 +176,7 @@ describe('standard output logger', function() {
                 logObject.warning('WARNING', 'this is a warning message');
             });
 
-        expect(data.match(/^\[WARNING\]\(.+\) - this is a warning message$/)).to.not.be.null;
+        expect(data.match(/^\[WARNING\]\(.+\) - this is a warning message\r?\n$/)).to.not.be.null;
 
         sut.config.useColour = true;
     });
@@ -190,7 +190,7 @@ describe('standard output logger', function() {
                 logObject.error('ERROR', 'this is an error message');
             });
 
-        expect(data.match(/^\[ERROR\]\(.+\) - this is an error message$/)).to.not.be.null;
+        expect(data.match(/^\[ERROR\]\(.+\) - this is an error message\r?\n$/)).to.not.be.null;
 
         sut.config.useColour = true;
     });
