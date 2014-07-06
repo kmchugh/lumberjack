@@ -44,7 +44,7 @@ describe('standard output logger', function() {
     };
 
     it('is of type stdout', function(){
-        expect(sut.options.logger).to.be.equal('stdout');
+        expect(sut.config.logger).to.be.equal('stdout');
     });
 
     it('has preset defaults', function(){

@@ -11,7 +11,7 @@ var fs = require('fs'),
 describe('file output logger', function() {
 
     it('is of type file', function(){
-        expect(sut.options.logger).to.be.equal('file');
+        expect(sut.config.logger).to.be.equal('file');
     });
 
     it('has a default file location', function(){
