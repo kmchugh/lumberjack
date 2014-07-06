@@ -72,30 +72,23 @@ describe('lumberjack', function() {
         }).to.throw(Error);
     });
 
-    it('can log express requests', function(done){
+    it('can log express requests', function(){
         var sut = require(_lumberjack)({
                 useColour: false,
                 application : 'test app',
                 applicationVersion : 'v0.0.0.0'
             });
+
+        var data = '';
+        var logFunction = console.log;
+        var errorFunction = console.error;
+
         var express = {
             use : function(fnRequest){
                 sut.test = fnRequest;
                 }
             };
 
-        var data = '';
-        var logFunction = console.log;
-        var errorFunction = console.error;
-
-        console.log = function(message){
-            data = message;
-        };
-        console.error = function(message){
-            data = message;
-        };
-
-        sut.decorate(express);
         sut.registerExpress(express);
 
         var req = {
@@ -104,7 +97,17 @@ describe('lumberjack', function() {
             };
         var res = {
                 on : function(event, callback){
-                    res[event] = callback;
+                    res[event] = function(){
+                        console.log = function(message){
+                            data = message;
+                        };
+                        console.error = function(message){
+                            data = message;
+                        };
+                        callback.apply(this, arguments);
+                        console.log = logFunction;
+                        console.error = errorFunction;
+                    };
                 },
                 removeListener : function(event){
                     res[event] = null;
@@ -128,10 +131,5 @@ describe('lumberjack', function() {
         sut.test(req, res, next);
         res.finish();
         expect(data.match(/^\[EXPRESS:request\]\(\".+\"\) - GET \[500\] - http:\/\/www.test.com 0ms\r?\n\{\r?\n  \"url\": \"http:\/\/www.test.com\",\r?\n  \"method\": \"GET\",\r?\n  \"statusCode\": 500,\r?\n  \"executionTime\": 0\r?\n\}$/)).to.not.be.null;
-
-        console.log = logFunction;
-        console.error = errorFunction;
-
-        done();
     });
 });
