@@ -2,7 +2,11 @@
 'use strict';
 
 var lumberjack = '../../../lib/lumberjack';
-var sut = require(lumberjack)({logger:'stdout'});
+var sut = require(lumberjack)({
+                logger:'stdout',
+                application : 'test app',
+                applicationVersion : 'v0.0.0.0'
+            });
 var expect = require('chai').expect;
 
 describe('standard output logger', function() {
@@ -44,11 +48,11 @@ describe('standard output logger', function() {
     };
 
     it('is of type stdout', function(){
-        expect(sut.config.logger).to.be.equal('stdout');
+        expect(sut.get('logger')).to.be.equal('stdout');
     });
 
     it('has preset defaults', function(){
-        expect(sut.config.format.default).to.be.equal('[%event%](%date%) - %message%');
+        expect(sut.get('format').default).to.be.equal('[%event%](%date%) - %message%');
     });
 
     it('logs warning messages to standard output', function(){
@@ -140,7 +144,7 @@ describe('standard output logger', function() {
     });
 
     it('can log debug messages in monochorme', function(){
-        sut.config.useColour = false;
+        sut.set('useColour', false);
         var logObject = {};
         sut.decorate(logObject);
 
@@ -150,11 +154,11 @@ describe('standard output logger', function() {
 
         expect(data.match(/^\[DEBUG\]\(.+\) - this is a debug message\r?\n$/)).to.not.be.null;
 
-        sut.config.useColour = true;
+        sut.set('useColour', true);
     });
 
     it('can log info messages in monochorme', function(){
-        sut.config.useColour = false;
+        sut.set('useColour', false);
         var logObject = {};
         sut.decorate(logObject);
 
@@ -164,11 +168,11 @@ describe('standard output logger', function() {
 
         expect(data.match(/^\[INFO\]\(.+\) - this is an info message$/)).to.not.be.null;
 
-        sut.config.useColour = true;
+        sut.set('useColour', true);
     });
 
     it('can log warning messages in monochorme', function(){
-        sut.config.useColour = false;
+        sut.set('useColour', false);
         var logObject = {};
         sut.decorate(logObject);
 
@@ -178,11 +182,11 @@ describe('standard output logger', function() {
 
         expect(data.match(/^\[WARNING\]\(.+\) - this is a warning message\r?\n$/)).to.not.be.null;
 
-        sut.config.useColour = true;
+        sut.set('useColour', true);
     });
 
     it('can log error messages in monochorme', function(){
-        sut.config.useColour = false;
+        sut.set('useColour', false);
         var logObject = {};
         sut.decorate(logObject);
 
@@ -192,7 +196,7 @@ describe('standard output logger', function() {
 
         expect(data.match(/^\[ERROR\]\(.+\) - this is an error message\r?\n$/)).to.not.be.null;
 
-        sut.config.useColour = true;
+        sut.set('useColour', true);
     });
 
     it('can handle a callback after logging', function(done){
