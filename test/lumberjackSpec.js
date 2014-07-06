@@ -8,17 +8,17 @@ describe('lumberjack', function() {
 
     it('can be configured', function() {
 
-        expect(require(_lumberjack)().options.level).is.equal(5);
+        expect(require(_lumberjack)().config.level).is.equal(5);
 
         expect(require(_lumberjack)({
             level: 4
-        }).options.level).is.equal(4);
+        }).config.level).is.equal(4);
 
         expect(require(_lumberjack)(function() {
             return {
                 level: 3
             };
-        }).options.level).is.equal(3);
+        }).config.level).is.equal(3);
 
 
         expect(function() {
@@ -32,18 +32,19 @@ describe('lumberjack', function() {
                 test: 12345
             };
         });
-        expect(sut.options.test).is.equal(12345);
+        expect(sut.config.test).is.equal(12345);
     });
 
-    it('has preset defaults', function(){
+    it('has preset defaults', function(done){
         var sut = require(_lumberjack)();
 
         expect(sut.config.level).to.be.equal(5);
         expect(sut.config.defaultEvent).to.be.equal('UNKNOWN');
         expect(sut.config.logger).to.be.equal('stdout');
+        done();
     });
 
-    it('can log express requests', function(){
+    it('can log express requests', function(done){
         var sut = require(_lumberjack)({useColour: false});
         var express = {
             use : function(fnRequest){
@@ -99,5 +100,6 @@ describe('lumberjack', function() {
         console.log = logFunction;
         console.error = errorFunction;
 
+        done();
     });
 });
