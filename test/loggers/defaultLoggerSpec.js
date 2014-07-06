@@ -46,11 +46,11 @@ describe('default logger', function() {
 	};
 
 	it('is of type stdout', function(){
-		expect(sut.config.logger).to.be.equal('stdout');
+		expect(sut.get('logger')).to.be.equal('stdout');
 	});
 
 	it('has preset defaults', function(){
-		expect(sut.config.format.default).to.be.equal('[%event%](%date%) - %message%');
+		expect(sut.get('format').default).to.be.equal('[%event%](%date%) - %message%');
 	});
 
 	it('will not decorate non objects', function(){
@@ -71,7 +71,7 @@ describe('default logger', function() {
 		var logObject = {};
 		sut.decorate(logObject);
 
-		sut.config.event = undefined;
+		sut.set('event', undefined);
 		var data = wrapLog(function(){
 			logObject.info('AN EVENT TYPE', 'A log message', {'data':'object'});
 		});
@@ -96,11 +96,11 @@ describe('default logger', function() {
 		});
 		expect(data).to.be.equal('custom error');
 
-		sut.config.format = function(entry){
+		sut.set('format', function(entry){
 				expect(entry).to.not.be.equal(null);
 				done();
 				return 'custom log';
-			};
+			});
 
 		data = wrapLog(function(){
 			logObject.info('AN EVENT TYPE', 'A log message', {'data':'object'});
@@ -139,7 +139,7 @@ describe('default logger', function() {
 		});
 		expect(data.match(/^\x1b\[36minfo message\x1b\[0m - \x1b\[37mtest\x1b\[0m\x1b\[90m\x1b\[0m$/)).to.not.be.null;
 
-		sut.config.useColour = false;
+		sut.set('useColour', false);
 
 		data = wrapLog(function(){
 			logObject.info('info event', 'info message', 'test');
@@ -148,25 +148,25 @@ describe('default logger', function() {
 
 	});
 
-	it('has a log function', function() {
-		expect(sut.log).to.be.a('function');
-		sut.sut = sut;
-
-		var data = wrapLog(function(){
-		    sut.log();
-		});
-		expect(data.match(/^\[\x1b\[36mUNKNOWN\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[36m\x1b\[0m$/)).to.not.be.null;
-
-		data = wrapLog(function(){
-		    sut.log('INFO', 'EVENT', 'MESSAGE', sut, 'ERROR');
-		});
-		expect(data.match(/^\[\x1b\[36mEVENT\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[36mMESSAGE\x1b\[0m$/)).to.not.be.null;
-	});
-
 	it('stores a reference in the log object', function(){
 		var logObject = {};
 		sut.decorate(logObject);
 
 		expect(logObject._lumberjack).to.be.equal(sut);
+	});
+
+	it('can log data with circular references', function(done){
+		var logObject = {};
+		sut.decorate(logObject);
+		sut.logObject = logObject;
+		logObject.sut = sut;
+
+		var logFunction = console.log;
+		console.log = function(){};
+
+		logObject.warning('CIRCULAR', 'this message contains a circular reference', sut, sut, function(){
+			console.log = logFunction;
+			done();
+		});
 	});
 });

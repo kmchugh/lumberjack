@@ -11,13 +11,13 @@ describe('lumberjack', function() {
         expect(require(_lumberjack)({
             application : 'test app',
             applicationVersion : 'v0.0.0.0'
-        }).config.level).is.equal(5);
+        }).get('level')).is.equal(5);
 
         expect(require(_lumberjack)({
             application : 'test app',
             applicationVersion : 'v0.0.0.0',
             level: 4
-        }).config.level).is.equal(4);
+        }).get('level')).is.equal(4);
 
         expect(require(_lumberjack)(function() {
             return {
@@ -25,7 +25,7 @@ describe('lumberjack', function() {
                 application : 'test app',
                 applicationVersion : 'v0.0.0.0'
             };
-        }).config.level).is.equal(3);
+        }).get('level')).is.equal(3);
 
 
         expect(function() {
@@ -41,7 +41,7 @@ describe('lumberjack', function() {
                 applicationVersion : 'v0.0.0.0'
             };
         });
-        expect(sut.config.test).is.equal(12345);
+        expect(sut.get('test')).is.equal(12345);
     });
 
     it('has preset defaults', function(done){
@@ -50,9 +50,9 @@ describe('lumberjack', function() {
             applicationVersion : 'v0.0.0.0'
         });
 
-        expect(sut.config.level).to.be.equal(5);
-        expect(sut.config.defaultEvent).to.be.equal('UNKNOWN');
-        expect(sut.config.logger).to.be.equal('stdout');
+        expect(sut.get('level')).to.be.equal(5);
+        expect(sut.get('defaultEvent')).to.be.equal('UNKNOWN');
+        expect(sut.get('logger')).to.be.equal('stdout');
         done();
     });
 
@@ -70,6 +70,114 @@ describe('lumberjack', function() {
                 application : 'test application'
             });
         }).to.throw(Error);
+    });
+
+    it('can log using multiple loggers', function(done){
+        var fs = require('fs'),
+            rimraf = require('rimraf'),
+            path = require('path');
+
+        var sut = require(_lumberjack)({
+            application : 'test app',
+            applicationVersion : 'v0.0.0.0',
+            logger : {
+                stdout : {
+                    useColour : false
+                },
+                file : {
+                    extension : 'tmp'
+                }
+            }
+        });
+
+        var logObject = {};
+        sut.decorate(logObject);
+        var logFunction = console.log;
+        var data = '';
+        console.log = function(message){
+            data = message;
+        };
+
+        fs.exists(sut.get('file', 'location'), function(exists){
+            if (exists)
+            {
+                rimraf.sync(sut.get('file', 'location'));
+            }
+
+            logObject.warning('WARNING', 'This will log to two places', null, null, function(){
+                console.log = logFunction;
+                expect(data.match(/^\[WARNING\]\(.+\) - This will log to two places\r?\n$/)).to.not.be.null;
+
+                fs.readdir(sut.get('file', 'location'), function(err, files){
+                    if (err)
+                    {
+                        throw err;
+                    }
+
+                    expect(files[0].match(/\.tmp$/)).to.not.be.null;
+
+                    fs.readFile(sut.get('file', 'location') + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
+                        expect(data.match(/^\[WARNING\]\(.+\) - This will log to two places\r?\n\r?\n$/)).to.not.be.null;
+                        done();
+                    });
+                });
+            });
+        });
+    });
+
+    it('can modify configs when using multiple loggers', function(done){
+        var fs = require('fs'),
+            rimraf = require('rimraf'),
+            path = require('path');
+
+        var sut = require(_lumberjack)({
+            application : 'test app',
+            applicationVersion : 'v0.0.0.0',
+            logger : {
+                stdout : {
+                    useColour : false
+                },
+                file : {
+                    extension : 'tmp'
+                }
+            }
+        });
+
+        var logObject = {};
+        sut.decorate(logObject);
+        var logFunction = console.log;
+        var data = '';
+        console.log = function(message){
+            data = message;
+        };
+
+        fs.exists(sut.get('file', 'location'), function(exists){
+            if (exists)
+            {
+                rimraf.sync(sut.get('file', 'location'));
+            }
+
+            sut.set('file', 'extension', 'test');
+
+            logObject.warning('WARNING', 'This will log to two places', null, null, function(){
+                console.log = logFunction;
+                expect(data.match(/^\[WARNING\]\(.+\) - This will log to two places\r?\n$/)).to.not.be.null;
+
+                fs.readdir(sut.get('file', 'location'), function(err, files){
+                    if (err)
+                    {
+                        throw err;
+                    }
+
+                    expect(files[0].match(/\.test$/)).to.not.be.null;
+
+                    fs.readFile(sut.get('file', 'location') + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
+                        expect(data.match(/^\[WARNING\]\(.+\) - This will log to two places\r?\n\r?\n$/)).to.not.be.null;
+                        done();
+                    });
+                });
+            });
+        });
     });
 
     it('can log express requests', function(){
@@ -118,18 +226,18 @@ describe('lumberjack', function() {
 
         sut.test(req, res, next);
         res.finish();
-        expect(data.match(/^\[EXPRESS:request\]\(\".+\"\) - GET \[200\] - http:\/\/www.test.com 0ms$/)).to.not.be.null;
+        expect(data.match(/^\[EXPRESS:request\]\(\".+\"\) - GET \[200\] - http:\/\/www.test.com \d+?ms$/)).to.not.be.null;
 
         res.statusCode = 400;
 
         sut.test(req, res, next);
         res.finish();
-        expect(data.match(/^\[EXPRESS:request\]\(\".+\"\) - GET \[400\] - http:\/\/www.test.com 0ms\r?\n\{\r?\n  \"url\": \"http:\/\/www.test.com\",\r?\n  \"method\": \"GET\",\r?\n  \"statusCode\": 400,\r?\n  \"executionTime\": 0\r?\n\}$/)).to.not.be.null;
+        expect(data.match(/^\[EXPRESS:request\]\(\".+\"\) - GET \[400\] - http:\/\/www.test.com \d+?ms\r?\n\{\r?\n  \"url\": \"http:\/\/www.test.com\",\r?\n  \"method\": \"GET\",\r?\n  \"statusCode\": 400,\r?\n  \"executionTime\": 0\r?\n\}$/)).to.not.be.null;
 
         res.statusCode = 500;
 
         sut.test(req, res, next);
         res.finish();
-        expect(data.match(/^\[EXPRESS:request\]\(\".+\"\) - GET \[500\] - http:\/\/www.test.com 0ms\r?\n\{\r?\n  \"url\": \"http:\/\/www.test.com\",\r?\n  \"method\": \"GET\",\r?\n  \"statusCode\": 500,\r?\n  \"executionTime\": 0\r?\n\}$/)).to.not.be.null;
+        expect(data.match(/^\[EXPRESS:request\]\(\".+\"\) - GET \[500\] - http:\/\/www.test.com \d+?ms\r?\n\{\r?\n  \"url\": \"http:\/\/www.test.com\",\r?\n  \"method\": \"GET\",\r?\n  \"statusCode\": 500,\r?\n  \"executionTime\": 0\r?\n\}$/)).to.not.be.null;
     });
 });

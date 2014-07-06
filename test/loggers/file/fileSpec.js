@@ -15,39 +15,39 @@ var fs = require('fs'),
 describe('file output logger', function() {
 
     it('is of type file', function(){
-        expect(sut.config.logger).to.be.equal('file');
+        expect(sut.get('logger')).to.be.equal('file');
     });
 
     it('has a default file location', function(){
-        expect(sut.config.location).to.be.equal(path.resolve('./logs'));
+        expect(sut.get('location')).to.be.equal(path.resolve('./logs'));
     });
 
     it('has a default file prefix', function(){
-        expect(sut.config.prefix).to.be.equal('log_');
+        expect(sut.get('prefix')).to.be.equal('log_');
     });
 
     it('has a default file extension', function(){
-        expect(sut.config.extension).to.be.equal('log');
+        expect(sut.get('extension')).to.be.equal('log');
     });
 
     it('will create the log directory if it does not exist', function(done){
         var logObject = {};
         sut.decorate(logObject);
 
-        var location = sut.config.location;
-        sut.config.location = path.resolve('./logs/test/test1');
+        var location = sut.get('location');
+        sut.set('location', path.resolve('./logs/test/test1'));
 
-        fs.exists(sut.config.location, function(exists){
+        fs.exists(sut.get('location'), function(exists){
             if (exists)
             {
-                rimraf.sync(sut.config.location);
+                rimraf.sync(sut.get('location'));
             }
             logObject.warning('WARNING', 'this is a warning message', null, function(){
                 setTimeout(
                     function(){
-                        fs.exists(sut.config.location, function(exists){
+                        fs.exists(sut.get('location'), function(exists){
                             expect(exists).to.be.true;
-                            sut.config.location = location;
+                            sut.set('location', location);
                             done();
                         });
                     },
@@ -61,19 +61,19 @@ describe('file output logger', function() {
         var logObject = {};
         sut.decorate(logObject);
 
-        fs.exists(sut.config.location, function(exists){
+        fs.exists(sut.get('location'), function(exists){
             if (exists)
             {
-                rimraf.sync(sut.config.location);
+                rimraf.sync(sut.get('location'));
             }
             logObject.warning('WARNING', 'this is a warning message', null, function(){
-                fs.readdir(sut.config.location, function(err, files){
+                fs.readdir(sut.get('location'), function(err, files){
                     if (err)
                     {
                         throw err;
                     }
 
-                    fs.readFile(sut.config.location + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
+                    fs.readFile(sut.get('location') + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
                         expect(data.match(/^\[WARNING\]\(.+\) - this is a warning message\r?\n\r?\n$/)).to.not.be.null;
                         done();
                     });
@@ -86,19 +86,19 @@ describe('file output logger', function() {
         var logObject = {};
         sut.decorate(logObject);
 
-        fs.exists(sut.config.location, function(exists){
+        fs.exists(sut.get('location'), function(exists){
             if (exists)
             {
-                rimraf.sync(sut.config.location);
+                rimraf.sync(sut.get('location'));
             }
             logObject.info('INFO', 'this is an info message', null, function(){
-                fs.readdir(sut.config.location, function(err, files){
+                fs.readdir(sut.get('location'), function(err, files){
                     if (err)
                     {
                         throw err;
                     }
 
-                    fs.readFile(sut.config.location + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
+                    fs.readFile(sut.get('location') + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
                         expect(data.match(/^\[INFO\]\(.+\) - this is an info message\r?\n$/)).to.not.be.null;
                         done();
                     });
@@ -111,19 +111,19 @@ describe('file output logger', function() {
         var logObject = {};
         sut.decorate(logObject);
 
-        fs.exists(sut.config.location, function(exists){
+        fs.exists(sut.get('location'), function(exists){
             if (exists)
             {
-                rimraf.sync(sut.config.location);
+                rimraf.sync(sut.get('location'));
             }
             logObject.debug('DEBUG', 'this is a debug message', null, function(){
-                fs.readdir(sut.config.location, function(err, files){
+                fs.readdir(sut.get('location'), function(err, files){
                     if (err)
                     {
                         throw err;
                     }
 
-                    fs.readFile(sut.config.location + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
+                    fs.readFile(sut.get('location') + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
                         expect(data.match(/^\[DEBUG\]\(.+\) - this is a debug message\r?\n\r?\n$/)).to.not.be.null;
                         done();
                     });
@@ -136,19 +136,19 @@ describe('file output logger', function() {
         var logObject = {};
         sut.decorate(logObject);
 
-        fs.exists(sut.config.location, function(exists){
+        fs.exists(sut.get('location'), function(exists){
             if (exists)
             {
-                rimraf.sync(sut.config.location);
+                rimraf.sync(sut.get('location'));
             }
             logObject.error('ERROR', 'this is an error message', null, null, function(){
-                fs.readdir(sut.config.location, function(err, files){
+                fs.readdir(sut.get('location'), function(err, files){
                     if (err)
                     {
                         throw err;
                     }
 
-                    fs.readFile(sut.config.location + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
+                    fs.readFile(sut.get('location') + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
                         expect(data.match(/^\[ERROR\]\(.+\) - this is an error message\r?\n\r?\n$/)).to.not.be.null;
                         done();
                     });
@@ -161,20 +161,20 @@ describe('file output logger', function() {
         var logObject = {};
         sut.decorate(logObject);
 
-        fs.exists(sut.config.location, function(exists){
+        fs.exists(sut.get('location'), function(exists){
             if (exists)
             {
-                rimraf.sync(sut.config.location);
+                rimraf.sync(sut.get('location'));
             }
             logObject.warning('WARNING', 'this is info 1', {some: 'data'}, function(){
                 logObject.info('INFO', 'this is info 2', null, function(){
-                    fs.readdir(sut.config.location, function(err, files){
+                    fs.readdir(sut.get('location'), function(err, files){
                         if (err)
                         {
                             throw err;
                         }
 
-                        fs.readFile(sut.config.location + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
+                        fs.readFile(sut.get('location') + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
                             expect(data.match(/^\[WARNING\]\(.+\) - this is info 1\r?\n{\r?\n  "some": "data"\r?\n}\r?\n\[INFO\]\(.+\) - this is info 2\r?\n$/)).to.not.be.null;
                             done();
                         });
@@ -188,25 +188,25 @@ describe('file output logger', function() {
         var logObject = {};
         sut.decorate(logObject);
 
-        fs.exists(sut.config.location, function(exists){
+        fs.exists(sut.get('location'), function(exists){
             if (exists)
             {
-                rimraf.sync(sut.config.location);
+                rimraf.sync(sut.get('location'));
             }
-            var format = sut.config.format;
-            sut.config.format = function(){
+            var format = sut.get('format');
+            sut.set('format', function(){
                 return 'this is the entry';
-            };
+            });
 
             logObject.info('INFO', 'this is info 1', null, function(){
-                    fs.readdir(sut.config.location, function(err, files){
+                    fs.readdir(sut.get('location'), function(err, files){
                         if (err)
                         {
                             throw err;
                         }
 
-                        fs.readFile(sut.config.location + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
-                            sut.config.format = format;
+                        fs.readFile(sut.get('location') + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
+                            sut.set('format', format);
                             expect(data.match(/^this is the entry\r?\n$/)).to.not.be.null;
                             done();
                         });
@@ -219,23 +219,23 @@ describe('file output logger', function() {
         var logObject = {};
         sut.decorate(logObject);
 
-        fs.exists(sut.config.location, function(exists){
+        fs.exists(sut.get('location'), function(exists){
             if (exists)
             {
-                rimraf.sync(sut.config.location);
+                rimraf.sync(sut.get('location'));
             }
-            var format = sut.config.format;
-            sut.config.format = '%symbol% [%date%] %message%';
+            var format = sut.get('format');
+            sut.set('format', '%symbol% [%date%] %message%');
 
             logObject.info('INFO', 'this is an info message', null, function(){
-                    fs.readdir(sut.config.location, function(err, files){
+                    fs.readdir(sut.get('location'), function(err, files){
                         if (err)
                         {
                             throw err;
                         }
 
-                        fs.readFile(sut.config.location + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
-                            sut.config.format = format;
+                        fs.readFile(sut.get('location') + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
+                            sut.set('format', format);
                             expect(data.match(/^ \[.+\] this is an info message\r?\n$/)).to.not.be.null;
                             done();
                         });
@@ -248,24 +248,24 @@ describe('file output logger', function() {
         var logObject = {};
         sut.decorate(logObject);
 
-        fs.exists(sut.config.location, function(exists){
+        fs.exists(sut.get('location'), function(exists){
             if (exists)
             {
-                rimraf.sync(sut.config.location);
+                rimraf.sync(sut.get('location'));
             }
-            var format = sut.config.format;
-            sut.config.format = '%symbol% [%date%] %message%';
-            sut.config.defaultSymbol = '#';
+            var format = sut.get('format');
+            sut.set('format', '%symbol% [%date%] %message%');
+            sut.set('defaultSymbol', '#');
 
             logObject.info('INFO', 'this is an info message', null, function(){
-                    fs.readdir(sut.config.location, function(err, files){
+                    fs.readdir(sut.get('location'), function(err, files){
                         if (err)
                         {
                             throw err;
                         }
 
-                        fs.readFile(sut.config.location + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
-                            sut.config.format = format;
+                        fs.readFile(sut.get('location') + path.sep + files[0], {encoding : 'utf-8'}, function(err, data){
+                            sut.set('format', format);
                             expect(data.match(/^# \[.+\] this is an info message\r?\n$/)).to.not.be.null;
                             done();
                         });

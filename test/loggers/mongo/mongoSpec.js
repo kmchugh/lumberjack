@@ -13,19 +13,19 @@ var expect = require('chai').expect;
 describe('mongo output logger', function() {
 
     it('is of type mongo', function(){
-        expect(sut.config.logger).to.be.equal('mongo');
+        expect(sut.get('logger')).to.be.equal('mongo');
     });
 
     it('has a default collection', function(){
-        expect(sut.config.collection).to.be.equal('log');
+        expect(sut.get('collection')).to.be.equal('log');
     });
 
     it('has a default host', function(){
-        expect(sut.config.host).to.be.equal('127.0.0.1');
+        expect(sut.get('host')).to.be.equal('127.0.0.1');
     });
 
     it('has a default port', function(){
-        expect(sut.config.port).to.be.equal(27017);
+        expect(sut.get('port')).to.be.equal(27017);
     });
 
     it('requires a database', function(){
@@ -110,7 +110,7 @@ describe('mongo output logger', function() {
 
         // recursive function just in case the save to mongo has not occurred
         var find = function(){
-            var Model = sut.getModel();
+            var Model = sut.getLogger('mongo').getModel();
             Model.findOne({message:message}, function(err, result){
                 if (result === null && count < 10)
                 {
