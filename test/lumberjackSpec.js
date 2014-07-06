@@ -35,15 +35,16 @@ describe('lumberjack', function() {
         expect(sut.config.test).is.equal(12345);
     });
 
-    it('has preset defaults', function(){
+    it('has preset defaults', function(done){
         var sut = require(_lumberjack)();
 
         expect(sut.config.level).to.be.equal(5);
         expect(sut.config.defaultEvent).to.be.equal('UNKNOWN');
         expect(sut.config.logger).to.be.equal('stdout');
+        done();
     });
 
-    it('can log express requests', function(){
+    it('can log express requests', function(done){
         var sut = require(_lumberjack)({useColour: false});
         var express = {
             use : function(fnRequest){
@@ -99,5 +100,6 @@ describe('lumberjack', function() {
         console.log = logFunction;
         console.error = errorFunction;
 
+        done();
     });
 });

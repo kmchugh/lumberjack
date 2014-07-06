@@ -7,7 +7,6 @@ var sut = require(lumberjack)({
                                 database: '_lumberjackTest'
                               });
 var expect = require('chai').expect;
-var mongoose = require('mongoose');
 
 describe('mongo output logger', function() {
 
@@ -97,14 +96,35 @@ describe('mongo output logger', function() {
         });
     });
 
-    it('can be used without a callback', function(){
+    it('can be used without a callback', function(done){
         var logObject = {};
         sut.decorate(logObject);
         var message = '!@#$%^&*()_+!@#$%^&*()_+!@#$%^&*()_+';
+        var count = 0;
 
         logObject.info('EVENT', message, null);
 
-        mon
+        // recursive function just in case the save to mongo has not occurred
+        var find = function(){
+            var Model = sut.getModel();
+            Model.findOne({message:message}, function(err, result){
+                if (result === null && count < 10)
+                {
+                    count++;
+                    find();
+                }
+                else
+                {
+                    expect(err).to.be.null;
+                    expect(result).to.not.be.null;
+                    result.remove();
+                    done();
+                }
+            });
+        };
+
+        find();
+
     });
 
 });
