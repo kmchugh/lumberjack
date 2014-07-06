@@ -1,7 +1,10 @@
 /*jshint expr: true*/
 'use strict';
 
-var sut = require('../../lib/lumberjack')();
+var sut = require('../../lib/lumberjack')({
+	application : 'test app',
+	applicationVersion : 'v0.0.0.0'
+});
 var expect = require('chai').expect;
 
 describe('default logger', function() {
@@ -61,7 +64,10 @@ describe('default logger', function() {
 	});
 
 	it('can handle an invalid default event', function(){
-		var sut = require('../../lib/lumberjack')();
+		var sut = require('../../lib/lumberjack')({
+			application : 'test app',
+    			applicationVersion : 'v0.0.0.0'
+		});
 		var logObject = {};
 		sut.decorate(logObject);
 
@@ -75,6 +81,8 @@ describe('default logger', function() {
 	it('can use a function to format the message', function(done){
 		var sut = require('../../lib/lumberjack')({
 			useColour: false,
+			application : 'test app',
+    			applicationVersion : 'v0.0.0.0',
 			format: function(entry){
 				expect(entry).to.not.be.equal(null);
 				return 'custom error';
@@ -118,7 +126,9 @@ describe('default logger', function() {
 
 	it('can log with custom formats', function(){
 		var sut = require('../../lib/lumberjack')({
-			format: '%message% - %data%%random%'
+			format: '%message% - %data%%random%',
+			application : 'test app',
+    			applicationVersion : 'v0.0.0.0'
 		});
 
 		var logObject = {};

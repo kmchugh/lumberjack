@@ -2,7 +2,11 @@
 'use strict';
 
 var lumberjack = '../../../lib/lumberjack';
-var sut = require(lumberjack)({logger:'stdout'});
+var sut = require(lumberjack)({
+                logger:'stdout',
+                application : 'test app',
+                applicationVersion : 'v0.0.0.0'
+            });
 var expect = require('chai').expect;
 
 describe('standard output logger', function() {

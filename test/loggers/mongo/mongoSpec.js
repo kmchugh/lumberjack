@@ -4,7 +4,9 @@
 var lumberjack = '../../../lib/lumberjack';
 var sut = require(lumberjack)({
                                 logger:'mongo',
-                                database: '_lumberjackTest'
+                                database: '_lumberjackTest',
+                                application : 'test app',
+                                applicationVersion : 'v0.0.0.0'
                               });
 var expect = require('chai').expect;
 
@@ -28,7 +30,9 @@ describe('mongo output logger', function() {
 
     it('requires a database', function(){
         expect(function(){
-            require(lumberjack)({logger:'mongo'});
+            require(lumberjack)({logger:'mongo',
+                    application : 'test application',
+                    applicationVersion: 'v0.0.0.0'});
         }).to.throw(Error);
     });
 

@@ -8,15 +8,22 @@ describe('lumberjack', function() {
 
     it('can be configured', function() {
 
-        expect(require(_lumberjack)().config.level).is.equal(5);
+        expect(require(_lumberjack)({
+            application : 'test app',
+            applicationVersion : 'v0.0.0.0'
+        }).config.level).is.equal(5);
 
         expect(require(_lumberjack)({
+            application : 'test app',
+            applicationVersion : 'v0.0.0.0',
             level: 4
         }).config.level).is.equal(4);
 
         expect(require(_lumberjack)(function() {
             return {
-                level: 3
+                level: 3,
+                application : 'test app',
+                applicationVersion : 'v0.0.0.0'
             };
         }).config.level).is.equal(3);
 
@@ -29,14 +36,19 @@ describe('lumberjack', function() {
     it('can allow for custom options', function() {
         var sut = require(_lumberjack)(function() {
             return {
-                test: 12345
+                test: 12345,
+                application : 'test app',
+                applicationVersion : 'v0.0.0.0'
             };
         });
         expect(sut.config.test).is.equal(12345);
     });
 
     it('has preset defaults', function(done){
-        var sut = require(_lumberjack)();
+        var sut = require(_lumberjack)({
+            application : 'test app',
+            applicationVersion : 'v0.0.0.0'
+        });
 
         expect(sut.config.level).to.be.equal(5);
         expect(sut.config.defaultEvent).to.be.equal('UNKNOWN');
@@ -44,8 +56,28 @@ describe('lumberjack', function() {
         done();
     });
 
+    it('requires an application name', function(){
+        expect(function(){
+            require(_lumberjack)({
+                applicationVersion : 'v0.0.0.0'
+            });
+        }).to.throw(Error);
+    });
+
+    it('requires an application version', function(){
+        expect(function(){
+            require(_lumberjack)({
+                application : 'test application'
+            });
+        }).to.throw(Error);
+    });
+
     it('can log express requests', function(done){
-        var sut = require(_lumberjack)({useColour: false});
+        var sut = require(_lumberjack)({
+                useColour: false,
+                application : 'test app',
+                applicationVersion : 'v0.0.0.0'
+            });
         var express = {
             use : function(fnRequest){
                 sut.test = fnRequest;

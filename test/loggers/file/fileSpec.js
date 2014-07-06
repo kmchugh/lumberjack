@@ -2,7 +2,11 @@
 'use strict';
 
 var lumberjack = '../../../lib/lumberjack';
-var sut = require(lumberjack)({logger:'file'});
+var sut = require(lumberjack)({
+    logger:'file',
+    application : 'test app',
+    applicationVersion : 'v0.0.0.0'
+});
 var expect = require('chai').expect;
 var fs = require('fs'),
     rimraf = require('rimraf'),
