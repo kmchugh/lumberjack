@@ -62,7 +62,7 @@ Valid configuration options are :
 
 - **format**,		[*Object*] 			- The list of formats to use for each of the log types
 - **colours**, 		[*Object*] 			- The list of colours to use for each of the log types
-- **useColour**,	[*Boolean*] 		- true to log in colour, false to log monochrome
+- **showColours**,	[*Boolean*] 		- true to log in colour, false to log monochrome
 
 #### file logger
 

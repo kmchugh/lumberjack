@@ -82,7 +82,7 @@ describe('lumberjack', function() {
             applicationVersion : 'v0.0.0.0',
             logger : {
                 stdout : {
-                    useColour : false
+                    showColours : false
                 },
                 file : {
                     extension : 'tmp'
@@ -135,7 +135,7 @@ describe('lumberjack', function() {
             applicationVersion : 'v0.0.0.0',
             logger : {
                 stdout : {
-                    useColour : false
+                    showColours : false
                 },
                 file : {
                     extension : 'tmp'
@@ -182,7 +182,7 @@ describe('lumberjack', function() {
 
     it('can log express requests', function(){
         var sut = require(_lumberjack)({
-                useColour: false,
+                showColours: false,
                 application : 'test app',
                 applicationVersion : 'v0.0.0.0'
             });

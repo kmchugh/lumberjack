@@ -80,7 +80,7 @@ describe('default logger', function() {
 
 	it('can use a function to format the message', function(done){
 		var sut = require('../../lib/lumberjack')({
-			useColour: false,
+			showColours: false,
 			application : 'test app',
     			applicationVersion : 'v0.0.0.0',
 			format: function(entry){
@@ -139,7 +139,7 @@ describe('default logger', function() {
 		});
 		expect(data.match(/^\x1b\[36minfo message\x1b\[0m - \x1b\[37mtest\x1b\[0m\x1b\[90m\x1b\[0m$/)).to.not.be.null;
 
-		sut.set('useColour', false);
+		sut.set('showColours', false);
 
 		data = wrapLog(function(){
 			logObject.info('info event', 'info message', 'test');
