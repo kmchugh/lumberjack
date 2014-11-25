@@ -1,7 +1,7 @@
 /*jshint expr: true*/
 'use strict';
 
-var lumberjack = '../../../lib/lumberjack';
+var lumberjack = '../../../../lib/lumberjack';
 var sut = require(lumberjack)({
                 logger:'stdout',
                 application : 'test app',

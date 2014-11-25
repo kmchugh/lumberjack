@@ -1,7 +1,7 @@
 /*jshint expr: true*/
 'use strict';
 
-var _lumberjack = '../lib/lumberjack';
+var _lumberjack = '../../lib/lumberjack';
 
 var expect = require('chai').expect;
 describe('lumberjack', function() {

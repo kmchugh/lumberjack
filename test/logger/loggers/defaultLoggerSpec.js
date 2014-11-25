@@ -1,7 +1,9 @@
 /*jshint expr: true*/
 'use strict';
 
-var sut = require('../../lib/lumberjack')({
+var _lumberjack = '../../../lib/lumberjack';
+
+var sut = require(_lumberjack)({
 	application : 'test app',
 	applicationVersion : 'v0.0.0.0'
 });
@@ -29,7 +31,7 @@ describe('default logger', function() {
 	});
 
 	it('can handle an invalid default event', function(){
-		var sut = require('../../lib/lumberjack')({
+		var sut = require(_lumberjack)({
 			application : 'test app',
     			applicationVersion : 'v0.0.0.0'
 		});
@@ -44,7 +46,7 @@ describe('default logger', function() {
 	});
 
 	it('can use a function to format the message', function(done){
-		var sut = require('../../lib/lumberjack')({
+		var sut = require(_lumberjack)({
 			showColours: false,
 			application : 'test app',
     			applicationVersion : 'v0.0.0.0',
@@ -90,7 +92,7 @@ describe('default logger', function() {
 	});
 
 	it('can log with custom formats', function(){
-		var sut = require('../../lib/lumberjack')({
+		var sut = require(_lumberjack)({
 			format: '%message% - %data%%random%',
 			application : 'test app',
     			applicationVersion : 'v0.0.0.0'
