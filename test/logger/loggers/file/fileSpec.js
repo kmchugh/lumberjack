@@ -1,7 +1,7 @@
 /*jshint expr: true*/
 'use strict';
 
-var lumberjack = '../../../lib/lumberjack';
+var lumberjack = '../../../../lib/lumberjack';
 var sut = require(lumberjack)({
     logger:'file',
     application : 'test app',
@@ -23,7 +23,7 @@ describe('file output logger', function() {
     });
 
     it('has a default file prefix', function(){
-        expect(sut.get('prefix')).to.be.equal('log_');
+        expect(sut.get('prefix')).to.be.equal('log');
     });
 
     it('has a default file extension', function(){
