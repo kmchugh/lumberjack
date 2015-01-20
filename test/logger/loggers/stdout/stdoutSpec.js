@@ -1,51 +1,16 @@
 /*jshint expr: true*/
 'use strict';
 
-var lumberjack = '../../../lib/lumberjack';
+var lumberjack = '../../../../lib/lumberjack';
 var sut = require(lumberjack)({
                 logger:'stdout',
                 application : 'test app',
                 applicationVersion : 'v0.0.0.0'
             });
 var expect = require('chai').expect;
+var helper = require('../../helpers/testFunctions');
 
-describe('standard output logger', function() {
-
-    /**
-     * Wraps console.log so that we can extract the output
-     * @return {String} The string that was logged
-     */
-    var wrapLog = function(callback)
-    {
-        var data = '';
-        var logFunction = console.log;
-
-        console.log = function(message){
-            data = message;
-        };
-        callback();
-
-        console.log = logFunction;
-        return data;
-    };
-
-    /**
-     * Wraps console.error so that we can extract the output
-     * @return {String} The string that was logged
-     */
-    var wrapError = function(callback)
-    {
-        var data = '';
-        var logFunction = console.error;
-
-        console.error = function(message){
-            data = message;
-        };
-        callback();
-
-        console.error = logFunction;
-        return data;
-    };
+describe('standard output logger (stdoutSpec.js)', function() {
 
     it('is of type stdout', function(){
         expect(sut.get('logger')).to.be.equal('stdout');
@@ -59,7 +24,7 @@ describe('standard output logger', function() {
         var logObject = {};
         sut.decorate(logObject);
 
-        var data = wrapLog(function(){
+        var data = helper.wrapLog(function(){
             logObject.warning('WARNING', 'this is a warning message');
         });
         expect(data.match(/^\[\x1b\[33mWARNING\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[33mthis is a warning message\x1b\[0m\r?\n\x1b\[90m\x1b\[0m$/)).to.not.be.null;
@@ -69,7 +34,7 @@ describe('standard output logger', function() {
         var logObject = {};
         sut.decorate(logObject);
 
-        var data = wrapLog(function(){
+        var data = helper.wrapLog(function(){
             logObject.debug('DEBUG', 'this is a debug message');
         });
         expect(data.match(/^\[\x1b\[90mDEBUG\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[90mthis is a debug message\x1b\[0m\r?\n\x1b\[37m\x1b\[0m$/)).to.not.be.null;
@@ -79,7 +44,7 @@ describe('standard output logger', function() {
         var logObject = {};
         sut.decorate(logObject);
 
-        var data = wrapLog(function(){
+        var data = helper.wrapLog(function(){
             logObject.info('INFO', 'this is an info message');
         });
         expect(data.match(/^\[\x1b\[36mINFO\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[36mthis is an info message\x1b\[0m$/)).to.not.be.null;
@@ -89,7 +54,7 @@ describe('standard output logger', function() {
         var logObject = {};
         sut.decorate(logObject);
 
-        var data = wrapError(function(){
+        var data = helper.wrapError(function(){
             logObject.error('ERROR', 'this is an error message');
         });
         expect(data.match(/^\[\x1b\[31mERROR\x1b\[0m\]\(\x1b\[90m.+\x1b\[0m\) - \x1b\[31mthis is an error message\x1b\[0m\r?\n\x1b\[90m\x1b\[0m$/)).to.not.be.null;
@@ -99,8 +64,8 @@ describe('standard output logger', function() {
         var logObject = {};
         sut.decorate(logObject);
 
-        wrapLog(function(){
-            var data = wrapError(function(){
+        helper.wrapLog(function(){
+            var data = helper.wrapError(function(){
                 logObject.warning('WARNING', 'this is a warning message');
             });
             expect(data).to.be.equal('');
@@ -111,8 +76,8 @@ describe('standard output logger', function() {
         var logObject = {};
         sut.decorate(logObject);
 
-        wrapLog(function(){
-            var data = wrapError(function(){
+        helper.wrapLog(function(){
+            var data = helper.wrapError(function(){
                 logObject.debug('DEBUG', 'this is a debug message');
             });
             expect(data).to.be.equal('');
@@ -123,8 +88,8 @@ describe('standard output logger', function() {
         var logObject = {};
         sut.decorate(logObject);
 
-        wrapLog(function(){
-            var data = wrapError(function(){
+        helper.wrapLog(function(){
+            var data = helper.wrapError(function(){
                 logObject.info('INFO', 'this is an info message');
             });
             expect(data).to.be.equal('');
@@ -135,8 +100,8 @@ describe('standard output logger', function() {
         var logObject = {};
         sut.decorate(logObject);
 
-        wrapError(function(){
-            var data = wrapLog(function(){
+        helper.wrapError(function(){
+            var data = helper.wrapLog(function(){
                 logObject.error('ERROR', 'this is an error message');
             });
             expect(data).to.be.equal('');
@@ -144,66 +109,66 @@ describe('standard output logger', function() {
     });
 
     it('can log debug messages in monochorme', function(){
-        sut.set('useColour', false);
+        sut.set('showColours', false);
         var logObject = {};
         sut.decorate(logObject);
 
-        var data = wrapLog(function(){
+        var data = helper.wrapLog(function(){
                 logObject.debug('DEBUG', 'this is a debug message');
             });
 
         expect(data.match(/^\[DEBUG\]\(.+\) - this is a debug message\r?\n$/)).to.not.be.null;
 
-        sut.set('useColour', true);
+        sut.set('showColours', true);
     });
 
     it('can log info messages in monochorme', function(){
-        sut.set('useColour', false);
+        sut.set('showColours', false);
         var logObject = {};
         sut.decorate(logObject);
 
-        var data = wrapLog(function(){
+        var data = helper.wrapLog(function(){
                 logObject.info('INFO', 'this is an info message');
             });
 
         expect(data.match(/^\[INFO\]\(.+\) - this is an info message$/)).to.not.be.null;
 
-        sut.set('useColour', true);
+        sut.set('showColours', true);
     });
 
     it('can log warning messages in monochorme', function(){
-        sut.set('useColour', false);
+        sut.set('showColours', false);
         var logObject = {};
         sut.decorate(logObject);
 
-        var data = wrapLog(function(){
+        var data = helper.wrapLog(function(){
                 logObject.warning('WARNING', 'this is a warning message');
             });
 
         expect(data.match(/^\[WARNING\]\(.+\) - this is a warning message\r?\n$/)).to.not.be.null;
 
-        sut.set('useColour', true);
+        sut.set('showColours', true);
     });
 
     it('can log error messages in monochorme', function(){
-        sut.set('useColour', false);
+        sut.set('showColours', false);
         var logObject = {};
         sut.decorate(logObject);
 
-        var data = wrapError(function(){
+        var data = helper.wrapError(function(){
                 logObject.error('ERROR', 'this is an error message');
             });
 
         expect(data.match(/^\[ERROR\]\(.+\) - this is an error message\r?\n$/)).to.not.be.null;
 
-        sut.set('useColour', true);
+        sut.set('showColours', true);
     });
 
     it('can handle a callback after logging', function(done){
         var logObject = {};
         sut.decorate(logObject);
 
-        wrapLog(function(){
+        helper.wrapLog(function(){
                 logObject.info('EVENT', 'message', null, function(){
                 done();
             });
