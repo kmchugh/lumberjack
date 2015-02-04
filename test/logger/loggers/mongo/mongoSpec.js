@@ -17,7 +17,7 @@ describe('mongo output logger', function() {
     });
 
     it('has a default collection', function(){
-        expect(sut.get('collection')).to.be.equal('log');
+        expect(sut.get('collection')).to.be.equal('Lumberjack_LogEntries');
     });
 
     it('has a default host', function(){
