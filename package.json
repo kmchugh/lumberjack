@@ -30,17 +30,23 @@
         "method-override": "2.3.0",
         "conventional-changelog": "*",
         "jshint": "2.5.10",
-        "jshint-stylish": "~1.0.0"
+        "jshint-stylish": "~1.0.0",
+        "browserify": "latest",
+        "uglify": "latest"
     },
     "engines": {
         "node": ">= 0.10.0"
     },
     "scripts": {
-        "pretest": "./node_modules/.bin/jshint --reporter node_modules/jshint-stylish/stylish.js .",
+        "pretest": "./node_modules/.bin/jshint --reporter node_modules/jshint-stylish/stylish.js ./lib/",
         "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --coverage --recursive ./test/logger/{,**/,**/**/}*Spec.js",
         "test-cov": "./node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha  --recursive ./test{,/**,/**/**}/*Spec.js -- --reporter dot",
         "test-travis": "./node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly  --recursive ./test{,/**,/**/**}/*Spec.js -- --reporter spec",
-        "changelog": "node ./changelog.js"
+        "changelog": "node ./changelog.js",
+        "build-js": "./node_modules/.bin/browserify -r ./lib/loggers/stdout lib/lumberjack.js > dist/lumberjack.js && ./node_modules/uglify/bin/uglify -s dist/lumberjack.js -o dist/lumberjack.min.js",
+        "clean-dist" : "rm -rf dist && mkdir dist",
+        "copy" : "cp LICENSE dist",
+        "build": "npm run clean-dist && npm run build-js && npm run copy"
 
     }
 }
