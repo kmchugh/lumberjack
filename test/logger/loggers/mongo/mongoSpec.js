@@ -4,7 +4,7 @@
 var lumberjack = '../../../../lib/lumberjack';
 var sut = require(lumberjack)({
                                 logger:'mongo',
-                                database: '_lumberjackTest',
+                                db : {name : '_lumberjackTest'},
                                 application : 'test app',
                                 applicationVersion : 'v0.0.0.0'
                               });
@@ -21,11 +21,11 @@ describe('mongo output logger', function() {
     });
 
     it('has a default host', function(){
-        expect(sut.get('host')).to.be.equal('127.0.0.1');
+        expect(sut.get('db.host')).to.be.equal('127.0.0.1');
     });
 
     it('has a default port', function(){
-        expect(sut.get('port')).to.be.equal(27017);
+        expect(sut.get('db.port')).to.be.equal(27017);
     });
 
     it('requires a database', function(){
