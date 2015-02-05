@@ -52,6 +52,28 @@ describe('mongo output logger', function() {
         });
     });
 
+    it('can be configured with a db string', function(done){
+        var logObject = {};
+        var sut = require(lumberjack)({
+                        logger:'mongo',
+                        db : 'mongodb://127.0.0.1:27017/_lumberjackTest',
+                        application : 'test app',
+                        applicationVersion : 'v0.0.0.0'
+                      });
+        sut.decorate(logObject);
+
+        logObject.warning('EVENT', 'this is a warning message', null, function(err, result){
+            expect(err).to.be.null;
+            expect(result).to.not.be.null;
+
+            expect(result.message).to.be.equal('this is a warning message');
+            expect(result.event).to.be.equal('EVENT');
+            expect(result.logLevel).to.be.equal('WARNING');
+            expect(result._id).to.not.equal(null);
+            done();
+        });
+    });
+
     it('will log info messages to a database', function(done){
         var logObject = {};
         sut.decorate(logObject);
