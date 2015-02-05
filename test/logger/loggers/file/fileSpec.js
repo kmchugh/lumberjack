@@ -57,6 +57,18 @@ describe('file output logger', function() {
         });
     });
 
+    it('can be used without a callback', function(done){
+        var logObject = {};
+        sut.decorate(logObject);
+        var message = '!@#$%^&*()_+!@#$%^&*()_+!@#$%^&*()_+';
+        var count = 0;
+
+        logObject.info('EVENT', message, null);
+
+        done();
+
+    });
+
     it('will log warning messages to a file', function(done){
         var logObject = {};
         sut.decorate(logObject);

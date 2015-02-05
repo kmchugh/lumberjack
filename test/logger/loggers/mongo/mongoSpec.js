@@ -4,7 +4,7 @@
 var lumberjack = '../../../../lib/lumberjack';
 var sut = require(lumberjack)({
                                 logger:'mongo',
-                                database: '_lumberjackTest',
+                                db : {name : '_lumberjackTest'},
                                 application : 'test app',
                                 applicationVersion : 'v0.0.0.0'
                               });
@@ -17,15 +17,15 @@ describe('mongo output logger', function() {
     });
 
     it('has a default collection', function(){
-        expect(sut.get('collection')).to.be.equal('log');
+        expect(sut.get('collection')).to.be.equal('Lumberjack_LogEntries');
     });
 
     it('has a default host', function(){
-        expect(sut.get('host')).to.be.equal('127.0.0.1');
+        expect(sut.get('db.host')).to.be.equal('127.0.0.1');
     });
 
     it('has a default port', function(){
-        expect(sut.get('port')).to.be.equal(27017);
+        expect(sut.get('db.port')).to.be.equal(27017);
     });
 
     it('requires a database', function(){
@@ -38,6 +38,28 @@ describe('mongo output logger', function() {
 
     it('will log warning messages to a database', function(done){
         var logObject = {};
+        sut.decorate(logObject);
+
+        logObject.warning('EVENT', 'this is a warning message', null, function(err, result){
+            expect(err).to.be.null;
+            expect(result).to.not.be.null;
+
+            expect(result.message).to.be.equal('this is a warning message');
+            expect(result.event).to.be.equal('EVENT');
+            expect(result.logLevel).to.be.equal('WARNING');
+            expect(result._id).to.not.equal(null);
+            done();
+        });
+    });
+
+    it('can be configured with a db string', function(done){
+        var logObject = {};
+        var sut = require(lumberjack)({
+                        logger:'mongo',
+                        db : 'mongodb://127.0.0.1:27017/_lumberjackTest',
+                        application : 'test app',
+                        applicationVersion : 'v0.0.0.0'
+                      });
         sut.decorate(logObject);
 
         logObject.warning('EVENT', 'this is a warning message', null, function(err, result){
