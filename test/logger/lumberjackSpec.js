@@ -252,6 +252,10 @@ describe('lumberjack', function() {
         expect(sut.warning).is.a('Function');
         expect(sut.debug).is.a('Function');
         expect(sut.error).is.a('Function');
+        expect(sut.i).to.be.equal(sut.info);
+        expect(sut.w).to.be.equal(sut.warning);
+        expect(sut.d).to.be.equal(sut.debug);
+        expect(sut.e).to.be.equal(sut.error);
 
         var data = null;
         var logFunction = console.log;
@@ -259,7 +263,7 @@ describe('lumberjack', function() {
                 data = message;
             };
 
-        sut.info('TEST EVENT', 'This is a test entry');
+        sut.i('TEST EVENT', 'This is a test entry');
         expect(data.match(/^\[TEST EVENT\]\(\".+\"\) - This is a test entry$/)).to.not.be.null;
 
         console.log = logFunction;

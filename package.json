@@ -1,7 +1,7 @@
 {
     "name": "lumberjack",
     "description": "Logging framework",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "url" : "https://github.com/kmchugh/lumberjack/issues",
     "author": "Ken McHugh <kmchugh@icatalyst.co.uk>",
     "email":"kmchugh@icatalyst.co.uk",

@@ -82,6 +82,10 @@ describe('default logger', function() {
 		expect(logObject.debug).to.be.equal(undefined);
 		expect(logObject.warning).to.be.equal(undefined);
 		expect(logObject.error).to.be.equal(undefined);
+		expect(logObject.i).to.be.equal(undefined);
+		expect(logObject.d).to.be.equal(undefined);
+		expect(logObject.w).to.be.equal(undefined);
+		expect(logObject.e).to.be.equal(undefined);
 
 		sut.decorate(logObject);
 
@@ -89,6 +93,10 @@ describe('default logger', function() {
 		expect(logObject.debug).to.be.a('function');
 		expect(logObject.warning).to.be.a('function');
 		expect(logObject.error).to.be.a('function');
+		expect(logObject.i).to.be.equal(logObject.info);
+		expect(logObject.d).to.be.equal(logObject.debug);
+		expect(logObject.w).to.be.equal(logObject.warning);
+		expect(logObject.e).to.be.equal(logObject.error);
 	});
 
 	it('can log with custom formats', function(){
@@ -102,14 +110,14 @@ describe('default logger', function() {
 		sut.decorate(logObject);
 
 		var data = helper.wrapLog(function(){
-			logObject.info('info event', 'info message', 'test');
+			logObject.i('info event', 'info message', 'test');
 		});
 		expect(data.match(/^\x1b\[36minfo message\x1b\[0m - \x1b\[37mtest\x1b\[0m\x1b\[90m\x1b\[0m$/)).to.not.be.null;
 
 		sut.set('showColours', false);
 
 		data = helper.wrapLog(function(){
-			logObject.info('info event', 'info message', 'test');
+			logObject.i('info event', 'info message', 'test');
 		});
 		expect(data.match(/^info message - test$/)).to.not.be.null;
 
