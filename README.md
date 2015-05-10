@@ -30,7 +30,19 @@ Decorate an object for logging
 
 Log
 
-	app.info('EVENT:OCCURRED', 'Message for event', {some: 'data'});
+    app.info('EVENT:OCCURRED', 'Message for event', {some: 'data'});
+
+or
+
+    app.i('EVENT:OCCURRED', 'Message for event', {some: 'data'});
+
+The logger object is already decorated so you can also log directly from the logger
+
+    lumberjack.info('EVENT:OCCURRED', 'Message for event', {some: 'data'});
+
+or
+
+    lumberjack.i('EVENT:OCCURRED', 'Message for event', {some: 'data'});
 
 ### Methods and parameters
 
@@ -42,6 +54,13 @@ Those methods are:
 - **info** 		- used for capturing any informational events
 - **warning** 	- used for logging any warnings that may occur
 - **error** 	- used for capturing any errors that require attention
+
+A shortened version of those methods is also made available
+
+- **d**   - used for debug messages
+- **i**    - used for capturing any informational events
+- **w**   - used for logging any warnings that may occur
+- **e**   - used for capturing any errors that require attention
 
 Each of the methods take the following parameters:
 

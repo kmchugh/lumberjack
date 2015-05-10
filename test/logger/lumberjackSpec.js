@@ -240,4 +240,32 @@ describe('lumberjack', function() {
         res.finish();
         expect(data.match(/^\[EXPRESS:request\]\(\".+\"\) - GET \[500\] - http:\/\/www.test.com \d+?ms\r?\n\{\r?\n  \"url\": \"http:\/\/www.test.com\",\r?\n  \"method\": \"GET\",\r?\n  \"statusCode\": 500,\r?\n  \"executionTime\": 0\r?\n\}$/)).to.not.be.null;
     });
+
+    it('is decorated', function(){
+        var sut = require(_lumberjack)({
+                showColours: false,
+                application : 'test app',
+                applicationVersion : 'v0.0.0.0'
+            });
+
+        expect(sut.info).is.a('Function');
+        expect(sut.warning).is.a('Function');
+        expect(sut.debug).is.a('Function');
+        expect(sut.error).is.a('Function');
+        expect(sut.i).to.be.equal(sut.info);
+        expect(sut.w).to.be.equal(sut.warning);
+        expect(sut.d).to.be.equal(sut.debug);
+        expect(sut.e).to.be.equal(sut.error);
+
+        var data = null;
+        var logFunction = console.log;
+        console.log = function(message){
+                data = message;
+            };
+
+        sut.i('TEST EVENT', 'This is a test entry');
+        expect(data.match(/^\[TEST EVENT\]\(\".+\"\) - This is a test entry$/)).to.not.be.null;
+
+        console.log = logFunction;
+    });
 });
